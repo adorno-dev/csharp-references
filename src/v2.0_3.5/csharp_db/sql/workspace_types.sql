@@ -1,0 +1,31 @@
+USE Workgroup
+
+GO
+
+IF EXISTS(SELECT name FROM sys.objects WHERE name LIKE '%UDT_COMPANY%')
+DROP TYPE UDT_COMPANY
+
+GO
+
+IF EXISTS(SELECT name FROM sys.objects WHERE name LIKE '%UDT_EMPLOYEE%')
+DROP TYPE UDT_EMPLOYEE
+
+GO
+
+CREATE TYPE UDT_EMPLOYEE AS TABLE
+(
+    EmployeeId INT NOT NULL,
+    Name VARCHAR(50),
+    Location VARCHAR(50)
+)
+
+GO
+
+CREATE TYPE UDT_COMPANY AS TABLE
+(
+    CompanyId INT NOT NULL,
+    Name VARCHAR(50),
+    Location VARCHAR(50)
+)
+
+GO

@@ -1,0 +1,29 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <!-- <TargetFrameworks>netcoreapp2.0;net35</TargetFrameworks> -->
+    <TargetFramework>netcoreapp2.0</TargetFramework>
+  </PropertyGroup>
+  <!-- Conditionally obtain references for the .NET Framework 3.5 target -->
+  <PropertyGroup Condition=" '$(TargetFramework)' == 'net35' ">
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net35</TargetFramework>
+    <FrameworkPathOverride>/lib/mono/4.0-api/</FrameworkPathOverride>
+    <TargetFrameworkRootPath>/lib/mono/xbuild-frameworks</TargetFrameworkRootPath>
+  </PropertyGroup>
+  <ItemGroup Condition=" '$(TargetFramework)' == 'net35' ">
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Data.OracleClient" />
+  </ItemGroup>
+  <ItemGroup Condition=" '$(TargetFramework)' == 'netcoreapp2.0' ">
+    <PackageReference Include="Microsoft.Extensions.Configuration" Version="2.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Xml" Version="2.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="2.0.0" />
+    <!-- <PackageReference Include="Microsoft.Extensions.Configuration.FileExtensions" Version="2.0.0" /> -->
+    <PackageReference Include="System.Configuration" Version="2.0.5" />
+    <PackageReference Include="System.Data.Common" Version="4.3.0" />
+    <PackageReference Include="System.Data.OracleClient" Version="1.0.6" />
+    <PackageReference Include="System.Data.SqlClient" Version="4.4.0" />
+  </ItemGroup>
+</Project>

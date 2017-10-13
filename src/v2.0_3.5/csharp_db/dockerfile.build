@@ -1,0 +1,115 @@
+#!/bin/bash
+
+#
+#      Filename: <dockerfile.build>
+#
+#   Description: How to work with classes and objects
+#
+#        Author: Adorno <adorno@protonmail.com>
+#
+#       Version: v1.0
+#
+#       Changes: None
+#
+
+# Caching packages, privilegies and volumes
+export DOCKER_VOLUME="/mnt/resources/docker/debian.jessie"
+export DOCKER_PKG_CACHE="$DOCKER_VOLUME/var/cache/apt/archives:/var/cache/apt/archives"
+export DOCKER_OPT_MSSQL="$DOCKER_VOLUME/var/opt/mssql:/var/opt/mssql"
+export DOCKER_SECURITY="SYS_ADMIN"
+export DOCKER_SYS_FS="/sys/fs/cgroup:/sys/fs/cgroup:ro"
+
+# Environment variables for MSQL SERVER
+export MSSQL_ACCEPT_EULA="y"
+export MSSQL_SA_PASSWORD="p@ssw0rd"
+export MSSQL_PID="Developer"
+export MSSQL_LCID=""
+export MSSQL_COLLATION=""
+export MSSQL_MEMORY_LIMIT_MB=""
+export MSSQL_TCP_PORT=""
+export MSSQL_IP_ADDRESS=""
+export MSSQL_DIR="/var/opt/mssql"
+export MSSQL_BACKUP_DIR="$MSSQL_DIR/backup"
+export MSSQL_DATA_DIR="$MSSQL_DIR/data"
+export MSSQL_LOG_DIR="$MSSQL_DIR/log"
+export MSSQL_DUMP_DIR="$MSSQL_DIR/dump"
+export MSSQL_ENABLE_HADR=""
+
+# Already exists an image of MSSQL-SERVER ??
+if [ "mssql-server" != "`docker images | grep -io mssql-server`" ]; then
+
+# Run the docker image as daemon and run /sbin/init (to enable systemd)
+docker run -itd \
+--hostname=mssql-server \
+--name=mssql-server \
+--cap-add=$DOCKER_SECURITY \
+-v $DOCKER_SYS_FS \
+-v $DOCKER_PKG_CACHE \
+-v $DOCKER_OPT_MSSQL \
+-p 1433:1433 \
+-p 1434:1434 \
+-p 53:53 \
+debian:jessie /sbin/init
+
+# Creates a bootstrap script to run on creation
+cat <<EOF > bootstrap
+#!/bin/bash
+
+# Removes pre-installed scripts (I want to keep the packages in cache)
+rm /etc/apt/apt.conf.d/* > /dev/null
+
+# The host can see and modify the packages
+chgrp -Rv users var/cache/apt/archives > /dev/null
+chmod -Rv g+w /var/cache/apt/archives > /dev/null
+
+# Install the required packages for MSQL-SERVER
+apt-get update
+apt-get install -y sudo apt-utils wget curl bash-completion vim software-properties-common \
+binutils systemd systemd-sysv gnupg apt-transport-https net-tools
+
+# Get key and install MSSQL-SERVER
+curl https://packages.microsoft.com/keys/microsoft.asc | sudo apt-key add -
+sudo add-apt-repository "$(curl https://packages.microsoft.com/config/ubuntu/16.04/mssql-server-2017.list)"
+sudo apt-get update
+sudo apt-get install -y mssql-server
+
+# Create defined folders
+sudo mkdir -p $MSSQL_BACKUP_DIR
+sudo mkdir -p $MSSQL_DATA_DIR
+sudo mkdir -p $MSSQL_LOG_DIR
+sudo mkdir -p $MSSQL_DUMP_DIR
+
+# Initilize the MSSQL-SERVER
+sudo ACCEPT_EULA=$MSSQL_ACCEPT_EULA \
+MSSQL_PID=$MSSQL_PID \
+MSSQL_SA_PASSWORD=$MSSQL_SA_PASSWORD \
+MSSQL_BACKUP_DIR=$MSSQL_BACKUP_DIR \
+MSSQL_DATA_DIR=$MSSQL_DATA_DIR \
+MSSQL_LOG_DIR=$MSSQL_LOG_DIR \
+MSSQL_DUMP_DIR=$MSSQL_DUMP_DIR \
+/opt/mssql/bin/mssql-conf setup
+
+EOF
+
+    # Enable to run, copy and removes the original copy from host
+    chmod +x bootstrap
+    docker cp bootstrap mssql-server:/root/bootstrap
+    rm bootstrap
+
+    # Commit MSSQL-SERVER as docker image
+    docker exec -it mssql-server /root/bootstrap
+    docker commit -m "initial commit" mssql-server mssql-server
+
+else
+
+    # Else run the existent docker image
+    docker run -itd \
+    --hostname=mssql-server \
+    --name=mssql-server \
+    --cap-add=$DOCKER_SECURITY \
+    -v $DOCKER_SYS_FS \
+    -v $DOCKER_PKG_CACHE \
+    -v $DOCKER_OPT_MSSQL \
+    mssql-server /sbin/init
+
+fi

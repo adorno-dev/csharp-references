@@ -1,0 +1,23 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFrameworks>netcoreapp2.0;net35</TargetFrameworks>
+    <TargetFramework>netcoreapp2.0</TargetFramework>
+  </PropertyGroup>
+  
+  <!-- Conditionally obtain references for the .NET Framework 3.5 target -->
+  <PropertyGroup Condition=" '$(TargetFramework)' == 'net35' ">
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net35</TargetFramework>
+    <FrameworkPathOverride>/lib/mono/4.0-api/</FrameworkPathOverride>
+    <TargetFrameworkRootPath>/lib/mono/xbuild-frameworks</TargetFrameworkRootPath>
+  </PropertyGroup>
+  <ItemGroup Condition=" '$(TargetFramework)' == 'net35' ">
+    <Reference Include="System.Runtime.Remoting" />
+    <Reference Include="System.Runtime.Remoting.Channels" />
+    <Reference Include="System.Runtime.Remoting.Channels.Tcp" />
+    <Reference Include="System.Runtime.Serialization.Formatters.Soap" />
+  </ItemGroup>
+
+</Project>

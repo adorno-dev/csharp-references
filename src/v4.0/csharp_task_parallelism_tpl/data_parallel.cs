@@ -24,10 +24,7 @@ namespace CSharp.DataParallelismTPL
     class DataParallel
     {
         // Purpose: One kind of logic to bunch of data
-        public DataParallel()
-        {
-
-        }
+        public DataParallel() {}
 
         public void ExampleMethod1()
         {

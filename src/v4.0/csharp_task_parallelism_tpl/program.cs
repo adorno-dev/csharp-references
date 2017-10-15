@@ -13,6 +13,9 @@
 
 using System;
 using CSharp.DataParallelismTPL;
+using CSharp.Parallel_Abortion;
+using CSharp.Parallel_Partitions;
+using CSharp.Parallel_Sliding;
 
 namespace CSharp.TaskParallelismTPL
 {
@@ -20,8 +23,13 @@ namespace CSharp.TaskParallelismTPL
     {
         static void Main(string[] args)
         {
-            TaskParallel.Run();
-            DataParallel.Run();
+            // TaskParallel.Run();
+            // DataParallel.Run();
+            // Abortion.Run();
+            // Partitions.Run();
+            // Sliding.Run();
+            // PartitionsPLINQ.Run();
+            PartitionsPLINQ.Run();
         }
     }
 }

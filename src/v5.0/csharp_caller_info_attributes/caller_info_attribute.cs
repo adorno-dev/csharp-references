@@ -1,3 +1,16 @@
+/*
+ *    Filename: <caller_info_attribute.cs>
+ *
+ * Description: Caller Info Attributes
+ *
+ *      Author: Adorno <adorno@protonmail.com>
+ *
+ *     Version: v1.0
+ *
+ *     Changes: None
+ *
+ */
+
 using System;
 using System.Runtime.CompilerServices;
 

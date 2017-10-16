@@ -4,6 +4,10 @@ namespace CSharp.Features
 {
     public class Pointer
     {
+        public Pointer()
+        {
+        }
+
         public Pointer(int X, int Y)
         {
             this.X = X;

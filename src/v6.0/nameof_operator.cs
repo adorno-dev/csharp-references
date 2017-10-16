@@ -11,6 +11,8 @@ namespace CSharp.Features
             if (other == null)
                 // throw new ArgumentNullException("pointer");
                 throw new ArgumentException(nameof(other));
+            
+            return null;
         }
     }
 }

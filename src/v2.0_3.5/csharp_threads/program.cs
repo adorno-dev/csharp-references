@@ -24,7 +24,7 @@ namespace CSharp.Threads
             ParameterizedThreadStart.Run();
             ThreadCallback.Run();
             Join.Run();
-            Concurrent.Run();
+            Concurrency.Run();
             Lock.Run();
             DeadLock.Run();
 
